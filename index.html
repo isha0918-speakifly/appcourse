@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Speakifly — learn to speak English with confidence</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@500;600&family=Work+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="icon" type="image/png" href="logo.png" />
+<link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+<header class="topbar container">
+  <a class="brand" href="index.html"><img src="logo.png" alt="Speakifly"></a>
+  <nav>
+    <a href="speaking-partner.html">AI speaking partner</a>
+    <a href="#" id="reset-link">Start over</a>
+  </nav>
+</header>
+
+<section class="container">
+  <div class="lesson-header">
+    <h1 id="greeting">Welcome</h1>
+    <p>Pick up where you left off, or start from Level 0 if this is your first visit.</p>
+  </div>
+  <div class="grid" id="level-grid"></div>
+</section>
+
+<footer class="site container">Speakifly — practice out loud, every day.</footer>
+
+<script src="curriculum.js"></script>
+<script src="progress.js"></script>
+<script>
+  const progress = initStudent();
+  document.getElementById("greeting").textContent =
+    progress.name && progress.name !== "Student" ? `Welcome back, ${progress.name}` : "Welcome";
+
+  const grid = document.getElementById("level-grid");
+  CURRICULUM.forEach((level) => {
+    const unlocked = levelIsUnlocked(level.id, progress);
+    const pct = levelCompletionPct(level, progress);
+    const card = document.createElement("a");
+    card.href = unlocked ? `lesson.html?level=${level.id}` : "#";
+    card.className = "level-card" + (unlocked ? "" : " locked");
+    card.innerHTML = `
+      <span class="level-tag">${unlocked ? (pct === 100 ? "Complete" : "In progress") : "Locked"}</span>
+      <h3>${level.title}</h3>
+      <p style="margin:0">${level.subtitle}</p>
+      <div class="level-progress"><span style="width:${pct}%"></span></div>
+    `;
+    grid.appendChild(card);
+  });
+
+  document.getElementById("reset-link").addEventListener("click", (e) => {
+    e.preventDefault();
+    if (confirm("This clears your progress on this device and starts from Level 0. Continue?")) {
+      resetProgress();
+    }
+  });
+</script>
+</body>
+</html>
